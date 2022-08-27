@@ -1,3 +1,5 @@
+const crypto = require("crypto");
+
 const Sib = require("sib-api-v3-sdk");
 
 require("dotenv").config();
@@ -144,5 +146,39 @@ exports.getResetPassword = (req, res, next) => {
     path: "/reset-password",
     pageTitle: "Reset Password",
     errorMessage: message,
+  });
+};
+
+exports.postResetPassword = (req, res, next) => {
+  crypto.randomBytes(32, (err, buffer) => {
+    if (err) {
+      console.log(err);
+      return res.redirect("/reset-password");
+    }
+    const token = buffer.toString("hex");
+    User.findOne({ email: req.body.email })
+      .then((user) => {
+        if (!user) {
+          req.flash("error", "No account with that email found.");
+          return res.redirect("/reset");
+        }
+        user.resetPasswordToken = token;
+        user.resetPasswordTokenExpiration = Date.now() + 3600000;
+        return user.save();
+      })
+      .then((result) => {
+        res.redirect("/");
+        return tranEmailApi.sendTransacEmail({
+          sender,
+          to: [{ email: req.body.email }],
+          subject: "Reset Password",
+          textContent: `You successfully signed up. Wolf clan will teach you the wolf life style and how to drink beer with your beer hands. Please beer with us!!. {{params.role}}.`,
+          htmlContent: `
+          <p>You requested password reset</p>
+          <p>Click this <a href="http://localhost:3000/reset-password/${token}">link</a> to get a new password.</p>
+          `,
+        });
+      })
+      .catch((err) => console.log(err));
   });
 };
