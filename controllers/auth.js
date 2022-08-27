@@ -1,3 +1,21 @@
+const Sib = require("sib-api-v3-sdk");
+
+require("dotenv").config();
+
+const client = Sib.ApiClient.instance;
+
+const apiKey = client.authentications["api-key"];
+apiKey.apiKey = process.env.API_KEY;
+
+const tranEmailApi = new Sib.TransactionalEmailsApi();
+
+const sender = {
+  email: "harrytimbog@gmail",
+  name: "Lone Wolf",
+};
+
+// const receivers = [{ email: email }];
+
 const bcrypt = require("bcryptjs");
 
 const User = require("../models/user");
@@ -88,7 +106,19 @@ exports.postSignup = (req, res, next) => {
         })
         .then((result) => {
           res.redirect("/login");
-        });
+          return tranEmailApi.sendTransacEmail({
+            sender,
+            to: [{ email: email }],
+            subject: "Signup succeeded",
+            textContent: `You successfully signed up. Wolf clan will teach you the wolf life style and how to drink beer with your beer hands. Please beer with us!!. {{params.role}}.`,
+            htmlContent: `<h1>Brokoto Fest!!!</h1><p>Welcome to the Family</p>
+    <a href="https://arigbedetimilehin-tech.vercel.app/">Visit</a>`,
+            params: {
+              role: "Brokoto vibes",
+            },
+          });
+        })
+        .catch((err) => console.log(err));
     })
     .catch((err) => {
       console.log(err);
