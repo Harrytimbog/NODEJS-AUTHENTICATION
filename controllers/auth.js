@@ -115,9 +115,6 @@ exports.postSignup = (req, res, next) => {
             textContent: `You successfully signed up. Wolf clan will teach you the wolf life style and how to drink beer with your beer hands. Please beer with us!!. {{params.role}}.`,
             htmlContent: `<h1>Brokoto Fest!!!</h1><p>Welcome to the Family</p>
     <a href="https://arigbedetimilehin-tech.vercel.app/">Visit</a>`,
-            params: {
-              role: "Brokoto vibes",
-            },
           });
         })
         .catch((err) => console.log(err));
@@ -160,7 +157,7 @@ exports.postResetPassword = (req, res, next) => {
       .then((user) => {
         if (!user) {
           req.flash("error", "No account with that email found.");
-          return res.redirect("/reset");
+          return res.redirect("/reset-password");
         }
         user.resetPasswordToken = token;
         user.resetPasswordTokenExpiration = Date.now() + 3600000;
