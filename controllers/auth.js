@@ -97,7 +97,7 @@ exports.postSignup = (req, res, next) => {
 
 exports.postLogout = (req, res, next) => {
   req.session.destroy((err) => {
-    req.flash("success", "User was logged out successfully.");
+    // req.flash("success", "User was logged out successfully.");
     res.redirect("/");
   });
 };
