@@ -14,6 +14,11 @@ const User = require("./models/user");
 const MONGODB_URI =
   "mongodb+srv://abedo:Abedo2022@cluster0.5t4ke.mongodb.net/shop-test-mongoose?retryWrites=true&w=majority";
 
+const mongodbOptions = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+};
+
 const app = express();
 const store = new MongoDBStore({
   uri: MONGODB_URI,
@@ -67,7 +72,7 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 mongoose
-  .connect(MONGODB_URI)
+  .connect(MONGODB_URI, mongodbOptions)
   .then((result) => {
     app.listen(3000);
   })
