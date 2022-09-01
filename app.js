@@ -7,12 +7,12 @@ const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require("csurf");
 const flash = require("connect-flash");
+require("dotenv").config();
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
 
-const MONGODB_URI =
-  "mongodb+srv://abedo:Abedo2022@cluster0.5t4ke.mongodb.net/shop-test-mongoose?retryWrites=true&w=majority";
+const MONGODB_URI = process.env.MONGODB_URI;
 
 const mongodbOptions = {
   useNewUrlParser: true,
